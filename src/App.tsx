@@ -10,6 +10,8 @@ import { Navigation } from "swiper/modules";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import showStr from "./utils/utils";
+import Dialog from "./components/dialog";
+// import {web3} from './web3/web3'
 
 // Import Swiper styles
 import "swiper/css";
@@ -17,6 +19,7 @@ import "swiper/css";
 declare global {
   interface Window {
     ethereum?: any;
+    okxwallet?: any;
   }
 }
 function App() {
@@ -101,47 +104,59 @@ function App() {
       setCurrentAccount(storedAccount);
     }
   }, []);
-  // 追踪用户钱包地址
-  const [currentAccount, setCurrentAccount] = useState<string | null>(null);
+  const [visible, setVisible] = useState(false);
+  const close = () => {
+    setVisible(false);
+  };
+
+  // 当前 用户授权链接钱包地址
+  const [currentAccount, setCurrentAccount] = useState<string | undefined>(undefined);
+  // const [accountList , setAccountList] = useState<any>([]);
 
   const handleLogin = async () => {
-    const { ethereum } = window;
-    if (!ethereum) {
-      alert("Please make sure you install MetaMask!!");
-      return;
-    } else {
-      try {
-        const accounts = await ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setCurrentAccount(accounts[0]);
-        localStorage.setItem("localAccount", accounts[0]);
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    setVisible(true);
+    // const { ethereum } = window;
+    // if(ethereum) {
+    //   await setAccountList((prevWallets:any)=>[...prevWallets,'MetaMask']);
+    // }
+    // if(okxwallet) {
+    //   await setAccountList((prevWallets:any)=>[...prevWallets,'OKexWallet'])
+    // }
+    // console.log('钱包列表',accountList)
+
+
+    // if (!ethereum) {
+    //   alert("Please make sure you install MetaMask!!");
+    //   return;
+    // } else {
+    //   try {
+    //     const accounts = await ethereum.request({
+    //       method: "eth_requestAccounts",
+    //     });
+    //     console.log('钱包列表',accounts)
+    //     setCurrentAccount(accounts[0]);
+    //     localStorage.setItem("localAccount", accounts[0]);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
   };
-  const switchAccount = async() =>{
+  const switchAccount = async () => {
     const { ethereum } = window;
     try {
       const switchAccounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
-      console.log(switchAccounts)
-    } catch (error) {
-      
-    }
-  }
+      console.log(switchAccounts);
+    } catch (error) {}
+  };
+
   return (
     <div className="mx-auto w-full max-w-[2560px] h-full">
       <header className="w-full flex flex-col header">
         <nav className="w-full flex py-1.5 justify-between fixed top-0 z-10 px-4 sm:px-16 xxl:px-16 bg-[#253347]">
           <div className=" flex items-center text-white cursor-pointer">
-            <img
-              className="w-10 h-10"
-              src="https://opensea.io/static/images/logos/opensea-logo.svg"
-              alt="cover"
-            />
+            <img className="w-10 h-10 rounded-full" src={haoge} alt="cover" />
             <span className="flex relative ml-2.5 mt-0.5 text-2xl font-bold">
               Yonga
             </span>
@@ -501,6 +516,7 @@ function App() {
           })}
         </div>
       </div>
+      <Dialog isVisible={visible} close={close}></Dialog>
     </div>
   );
 }
